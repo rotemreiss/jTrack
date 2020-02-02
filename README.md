@@ -66,7 +66,7 @@ Short Form    | Long Form            | Description
 - With attachment\
   ```python jtrack.py -p MY_PROJECT -i domain.com -s "This is the subject" -a /tmp/scan-results.log```
 
-### Real-life Scenario Example
+### Real-life Example
 You are running a daily security scan for vulnerabilities with a tool like [WPScan][wpscan] and you want to manage all
 the results for that domain in one (up-to-date) Jira task:
 
@@ -86,7 +86,9 @@ Feel free to fork the repository and submit pull-requests.
 
 ## Support
 
-[Create new GitHub issue][newissue] OR via <a href="https://www.linkedin.com/in/reissr" target="_blank">Linkedin</a>
+[Create new GitHub issue][newissue]
+
+Want to say thanks? :) Message me on <a href="https://www.linkedin.com/in/reissr" target="_blank">Linkedin</a>
 
 
 ---
