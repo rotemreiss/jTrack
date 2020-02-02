@@ -4,8 +4,6 @@
 > Lightweight Python utility to allow fast and effective integrations of external reporters (e.g. automated scanners)
 > with Jira.
 
-[![License](http://img.shields.io/:license-mit-blue.svg?style=flat-square)](http://badges.mit-license.org)
-
 ---
 
 ## Description
@@ -53,14 +51,14 @@ Short Form    | Long Form            | Description
 -se           | --skip-existing      | Do nothing if Jira already exists and open.
 
 ### Examples
-- List all options
-```python jtrack.py --help```
-- Handle new "event" with the identifier (unique key) *domain.com* 
-```python jtrack.py -p MY_PROJECT -i domain.com -s "This is the subject"```
-- With Labels
-```python jtrack.py -p MY_PROJECT -i domain.com -l SCAN-LABEL, DAILY-SCAN -s "This is the subject"```
-- With attachment
-```python jtrack.py -p MY_PROJECT -i domain.com -s "This is the subject" -a /tmp/scan-results.log```
+- List all options\
+  ```python jtrack.py --help```
+- Handle new "event" with the identifier (unique key) *domain.com*\
+  ```python jtrack.py -p MY_PROJECT -i domain.com -s "This is the subject"```
+- With Labels\
+  ```python jtrack.py -p MY_PROJECT -i domain.com -l SCAN-LABEL, DAILY-SCAN -s "This is the subject"```
+- With attachment\
+  ```python jtrack.py -p MY_PROJECT -i domain.com -s "This is the subject" -a /tmp/scan-results.log```
 
 ### Real-life Scenario Example
 You are running a daily security scan for vulnerabilities with a tool like [WPScan][wpscan] and you want to manage all
@@ -87,8 +85,7 @@ Feel free to fork the repository and submit pull-requests.
 
 ## Support
 
-[![New GitHub issue !](https://img.shields.io/badge/Ask%20me-anything-1abc9c.svg)](https://github.com/rotemreiss/jTrack/issues/new)
-&nbsp;Or via <a href="https://www.linkedin.com/in/reissr" target="_blank">Linkedin</a>
+[Create new GitHub issue][newissue] OR via <a href="https://www.linkedin.com/in/reissr" target="_blank">Linkedin</a>
 
 
 ---
@@ -101,3 +98,4 @@ Feel free to fork the repository and submit pull-requests.
 
 <!-- Markdown helper -->
 [wpscan]: https://wpscan.org/
+[newissue]: https://github.com/rotemreiss/jTrack/issues/new
