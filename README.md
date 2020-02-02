@@ -1,7 +1,7 @@
-# Jtrack
+# jTrack
 ![](images/logo.png)
 
-> Lightweight Python utility to allow fast and effective integrations of external reporters (e.g. automated scanners)
+> A lightweight Python utility to allow fast and effective integrations of external reporters (e.g. automated scanners)
 > with Jira.
 
 ---
