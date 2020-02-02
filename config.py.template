@@ -1,0 +1,6 @@
+# You can extend this configuration for your requirements.
+# For example, you can use environment variables instead of hard-coding the credentials here.
+
+url='https://jira.example.com'
+username='service_user'
+password='mysecretpassword'
