@@ -17,6 +17,11 @@ has already been resolved.
 
 ---
 
+## The logic in a nutshell
+![](images/logic.png)
+
+---
+
 ## Installation
 ### Clone the repository
 - `git clone https://github.com/rotemreiss/jTrack.git`
@@ -66,11 +71,6 @@ You are running a daily security scan for vulnerabilities with a tool like [WPSc
 the results for that domain in one (up-to-date) Jira task:
 
 Just pass the domain name as the identifier and the report file as an attachment.  
-
----
-
-## The logic in a nutshell
-![](images/logic.png)
 
 ---
 ## Roadmap
