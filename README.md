@@ -12,8 +12,7 @@ You are using an automated scanner or QA tool and want it to automatically creat
 But.. How can my scanner know if the Jira has been already created on a previous scan?
 This is where jTrack comes in.
 
-jTrack is using a local Sqlite to track the issues that have already been created and then updates the issues OR creates new one if the previous
-has already been resolved.
+jTrack uses a local Sqlite to track the issues that have already been created and then updates the issues OR creates new one if the previous has already been resolved.
 
 ---
 
