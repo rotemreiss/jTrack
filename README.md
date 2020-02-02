@@ -25,7 +25,8 @@ has already been resolved.
 - `pip install -r requirements.txt`
 
 ### Setup
-- Copy `config.py.template` to `config.py` - `cp config.py.template config.py`
+- Copy `config.py.template` to `config.py`\
+  ```cp config.py.template config.py```
 - Fill the url, username and password
 
 ---
