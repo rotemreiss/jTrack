@@ -70,6 +70,7 @@ You are running a daily security scan for vulnerabilities with a tool like [WPSc
 the results for that domain in one (up-to-date) Jira task:
 
 Just pass the domain name as the identifier and the report file as an attachment.
+
 **Take a look in the examples directory.** 
 
 ---
