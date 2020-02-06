@@ -1,10 +1,8 @@
-# Jtrack
+# jTrack
 ![](images/logo.png)
 
-> Lightweight Python utility to allow fast and effective integrations of external reporters (e.g. automated scanners)
+> A lightweight Python utility to allow fast and effective integrations of external reporters (e.g. automated scanners)
 > with Jira.
-
-[![License](http://img.shields.io/:license-mit-blue.svg?style=flat-square)](http://badges.mit-license.org)
 
 ---
 
@@ -14,8 +12,12 @@ You are using an automated scanner or QA tool and want it to automatically creat
 But.. How can my scanner know if the Jira has been already created on a previous scan?
 This is where jTrack comes in.
 
-jTrack is using a local Sqlite to track the issues that have already been created and then updates the issues OR creates new one if the previous
-has already been resolved.
+jTrack uses a local Sqlite to track the issues that have already been created and then updates the issues OR creates new one if the previous has already been resolved.
+
+---
+
+## The logic in a nutshell
+![](images/logic.png)
 
 ---
 
@@ -27,7 +29,8 @@ has already been resolved.
 - `pip install -r requirements.txt`
 
 ### Setup
-- Copy `config.py.template` to `config.py` - `cp config.py.template config.py`
+- Copy `config.py.template` to `config.py`\
+  ```cp config.py.template config.py```
 - Fill the url, username and password
 
 ---
@@ -53,26 +56,21 @@ Short Form    | Long Form            | Description
 -se           | --skip-existing      | Do nothing if Jira already exists and open.
 
 ### Examples
-- List all options
-```python jtrack.py --help```
-- Handle new "event" with the identifier (unique key) *domain.com* 
-```python jtrack.py -p MY_PROJECT -i domain.com -s "This is the subject"```
-- With Labels
-```python jtrack.py -p MY_PROJECT -i domain.com -l SCAN-LABEL, DAILY-SCAN -s "This is the subject"```
-- With attachment
-```python jtrack.py -p MY_PROJECT -i domain.com -s "This is the subject" -a /tmp/scan-results.log```
+- List all options\
+  ```python jtrack.py --help```
+- Handle new "event" with the identifier (unique key) *domain.com*\
+  ```python jtrack.py -p MY_PROJECT -i domain.com -s "This is the subject"```
+- With Labels\
+  ```python jtrack.py -p MY_PROJECT -i domain.com -l SCAN-LABEL, DAILY-SCAN -s "This is the subject"```
+- With attachment\
+  ```python jtrack.py -p MY_PROJECT -i domain.com -s "This is the subject" -a /tmp/scan-results.log```
 
-### Real-life Scenario Example
+### Real-life Example
 You are running a daily security scan for vulnerabilities with a tool like [WPScan][wpscan] and you want to manage all
 the results for that domain in one (up-to-date) Jira task:
 
 Just pass the domain name as the identifier and the report file as an attachment.
 **Take a look in the examples directory.** 
-
----
-
-## The logic in a nutshell
-![](images/logic.png)
 
 ---
 ## Roadmap
@@ -88,8 +86,9 @@ Feel free to fork the repository and submit pull-requests.
 
 ## Support
 
-[![New GitHub issue !](https://img.shields.io/badge/Ask%20me-anything-1abc9c.svg)](https://github.com/rotemreiss/jTrack/issues/new)
-&nbsp;Or via <a href="https://www.linkedin.com/in/reissr" target="_blank">Linkedin</a>
+[Create new GitHub issue][newissue]
+
+Want to say thanks? :) Message me on <a href="https://www.linkedin.com/in/reissr" target="_blank">Linkedin</a>
 
 
 ---
@@ -102,3 +101,4 @@ Feel free to fork the repository and submit pull-requests.
 
 <!-- Markdown helper -->
 [wpscan]: https://wpscan.org/
+[newissue]: https://github.com/rotemreiss/jTrack/issues/new
