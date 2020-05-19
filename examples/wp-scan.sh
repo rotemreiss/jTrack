@@ -41,7 +41,7 @@ scan() {
 # Check if vulnerabilities has been identified, and if so - update our Jira.
 handleJira() {
   if grep -q -i -e 'vulnerability identified' -e 'vulnerabilities identified' $LOG_PATH; then
-    python3 jtrack.py -i "${DOMAIN}" -p "${PROJECT_KEY}" -s "${SUBJECT}" -a "${LOG_PATH}";
+    python jtrack.py -i "${DOMAIN}" -p "${PROJECT_KEY}" -s "${SUBJECT}" -a "${LOG_PATH}";
   fi
 }
 
