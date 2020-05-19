@@ -32,6 +32,9 @@ jTrack uses a local Sqlite to track the issues that have already been created an
 - Copy `config.py.template` to `config.py`\
   ```cp config.py.template config.py```
 - Fill the url, username and password
+- Want to run jTrack from anywhere? NP!
+  - Edit `launcher.sh` and follow the instructions there
+  - Run `cp launcher.sh /usr/local/bin/jtrack`
 
 ---
 
