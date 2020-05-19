@@ -9,4 +9,4 @@
 #                                                                           #
  ###########################################################################
 
-(cd /Users/rotemr/tools/jtrack && python3 jtrack.py "$@")
+(cd /opt/jtrack && python jtrack.py "$@")
