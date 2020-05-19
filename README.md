@@ -69,13 +69,17 @@ Short Form    | Long Form            | Description
 - With attachment\
   ```python jtrack.py -p MY_PROJECT -i domain.com -s "This is the subject" -a /tmp/scan-results.log```
 
-### Real-life Example
+### Real-life Examples
+#### WordPress Scanner
 You are running a daily security scan for vulnerabilities with a tool like [WPScan][wpscan] and you want to manage all
 the results for that domain in one (up-to-date) Jira task:
 
 Just pass the domain name as the identifier and the report file as an attachment.
 
 **Take a look in the examples directory.** 
+
+#### Subdomain Takeover Scanner
+See https://github.com/rotemreiss/robusto/blob/master/hooks/_found_hook_jira_example
 
 ---
 ## Roadmap
