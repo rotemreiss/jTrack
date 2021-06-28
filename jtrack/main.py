@@ -4,14 +4,18 @@ import argparse
 import sqlite3
 import os
 from atlassian import Jira
-import config
 import sys
 
+# Default values.
+JIRA_CLOSED = ['Closed', 'Resolved']
+JIRA_TYPE = "Task"
+JIRA_LABELS = []
+
 # Check if we are running this on windows platform
-is_windows = sys.platform.startswith('win')
+IS_WINDOWS = sys.platform.startswith('win')
 
 # Console Colors
-if is_windows:
+if IS_WINDOWS:
     # Windows deserves coloring too :D
     G = '\033[92m'  # green
     Y = '\033[93m'  # yellow
@@ -32,7 +36,7 @@ else:
     W = '\033[0m'   # white
 
 
-def db_install():
+def db_install(sqli_db):
     if not (os.path.isfile('./' + sqli_db)):
         db = sqlite3.connect(sqli_db)
         cursor = db.cursor()
@@ -86,12 +90,13 @@ def update_jira_db(id, jira_key):
 
 
 # Checks if we already have an existing Jira task so we'll know if we want to update or create a new one.
-def has_existing_task(identifier):
+def has_existing_task(identifier, jira_closed):
     if is_identifier_in_db(identifier):
         jira_key = get_jira_key_by_identifier(identifier)
         status = jira.get_issue_status(jira_key)
         # If task exists, but closed - return false.
-        if status in args.jira_closed:
+        print(status)
+        if status in jira_closed:
             return False
         else:
             return True
@@ -99,40 +104,40 @@ def has_existing_task(identifier):
 
 
 # Upsert a jira issue (wrapper for insert or update actions).
-def upsert_jira(identifier):
-    if has_existing_task(args.identifier):
-        if args.skip_existing:
+def upsert_jira(identifier, project, summary, skip_existing, jira_closed, attachment, type, description, labels):
+    if has_existing_task(identifier, jira_closed):
+        if skip_existing:
             print('Issue already exists and open. Skipping.')
             return False
-        jira_key = get_jira_key_by_identifier(args.identifier)
-        update_jira(jira_key)
+        jira_key = get_jira_key_by_identifier(identifier)
+        update_jira(jira_key, attachment)
     else:
-        new_jira = create_new_jira()
+        new_jira = create_new_jira(project, type, summary, description, labels, attachment)
         jira_key = new_jira['key']
-        upsert_new_identifier(args.identifier, jira_key)
-        print(f'Created new Jira ticket: {jira_key}. jTrack id: {args.identifier}')
+        upsert_new_identifier(identifier, jira_key)
+        print(f'Created new Jira ticket: {jira_key}. jTrack id: {identifier}')
 
 
 # Create a new Jira issue.
-def create_new_jira():
+def create_new_jira(project, type, summary, description, labels, attachment):
     new_task = jira.issue_create(fields={
-        'project': {'key': args.project},
+        'project': {'key': project},
         'issuetype': {
-            "name": args.type
+            "name": type
         },
-        'summary': args.summary,
-        'labels': args.labels
+        'summary': summary,
+        'labels': labels
     })
 
     jira_key = new_task['id']
 
     # Add the report as an attachment
-    if args.attach is not None:
-        jira.add_attachment(jira_key, args.attach)
+    if attachment is not None:
+        jira.add_attachment(jira_key, attachment)
 
     # Add description.
-    if args.desc is not None:
-        desc_field = {'description': args.desc}
+    if description is not None:
+        desc_field = {'description': description}
         jira.update_issue_field(jira_key, desc_field)
 
     return new_task
@@ -140,9 +145,9 @@ def create_new_jira():
 
 # Currently onlyl support attachment addition.
 # @todo Extend to support description.
-def update_jira(jira_key):
-    if args.attach is not None:
-        jira.add_attachment(jira_key, args.attach)
+def update_jira(jira_key, attachment):
+    if attachment is not None:
+        jira.add_attachment(jira_key, attachment)
     else:
         print('No attachment provided. Nothing to updated.')
 
@@ -167,41 +172,81 @@ def banner():
     """ % (B, W, B))
 
 
-if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description='Creates a Jira task.')
+def main(identifier, project, summary, **kwargs):
+    global db
+    global cursor
+    global jira
 
-    # Add the arguments
-    parser.add_argument('-p', '--project', help='The project\'s name on Jira (e.g. EXAMPLE).', dest='project',
-                        required=True)
-    parser.add_argument('-i', '--identifier', help='A system identifier for the issue.', dest='identifier', required=True)
-    parser.add_argument('-s', '--summary', help='Value for the summary field.', dest='summary', required=True)
-    parser.add_argument('-d', '--description', help='Value for the description field.', dest='desc')
-    parser.add_argument('-a', '--attachment', help='Path of file to add as attachment.', type=attachment_arg, dest='attach')
-    parser.add_argument('-l', '--labels', nargs='*', help='Jira labels to add to new issues.', dest='labels',
-                        default=[], type=str, required=False)
-    parser.add_argument('-j', '--jira-closed-status', nargs='*', help='Jira statuses that are considered to be closed.',
-                        dest='jira_closed', default=['Closed', 'Resolved'], type=str, required=False)
-    parser.add_argument('-t', '--jira-type', help='Jira issue type for new tasks.', dest='type', default="Task",
-                        required=False)
-    parser.add_argument('-se', '--skip-existing', help='Do nothing if Jira already exists and open.', action='store_true', dest='skip_existing')
-    args = parser.parse_args()
-
-    # Print our banner
-    banner()
+    # Every tool needs a banner.
+    if kwargs.get('quiet', False) is True:
+        banner()
 
     # Jira Connection Details
-    # @todo Move to our SQLite DB.
+    JIRA_URL = os.environ.get('JIRA_URL')
+    JIRA_USER = os.environ.get('JIRA_USER')
+    JIRA_PASSWORD = os.environ.get('JIRA_PASSWORD')
+
     jira = Jira(
-        url=config.url,
-        username=config.username,
-        password=config.password)
+        url=JIRA_URL,
+        username=JIRA_USER,
+        password=JIRA_PASSWORD)
 
     # Init DB.
     sqli_db = "jtrack.db"
-    db_install()
+    db_install(sqli_db)
     db = sqlite3.connect(sqli_db)
     cursor = db.cursor()
 
-    upsert_jira(args.identifier)
+    # Initialize default values.
+    skip_existing=kwargs.get('skip_existing', True),
+    jira_closed=kwargs.get('jira_closed', JIRA_CLOSED),
+    attachment=kwargs.get('attach', None),
+    type=kwargs.get('type', JIRA_TYPE),
+    description=kwargs.get('desc', None),
+    labels=kwargs.get('labels', JIRA_LABELS),
+    upsert_jira(identifier, project, summary, skip_existing, jira_closed, attachment, type, description, labels)
 
     db.close()
+
+
+def interactive():
+    parser = argparse.ArgumentParser(description='Creates a Jira task.')
+
+    # Add the arguments
+    parser.add_argument('-i', '--identifier', help='A system identifier for the issue.', dest='identifier',
+                        required=True)
+    parser.add_argument('-p', '--project', help='The project\'s name on Jira (e.g. EXAMPLE).', dest='project',
+                        required=True)
+    parser.add_argument('-s', '--summary', help='Value for the summary field.', dest='summary', required=True)
+    parser.add_argument('-d', '--description', help='Value for the description field.', dest='desc')
+    parser.add_argument('-a', '--attachment', help='Path of file to add as attachment.', type=attachment_arg,
+                        dest='attach')
+    parser.add_argument('-l', '--labels', nargs='*', help='Jira labels to add to new issues.', dest='labels',
+                        default=JIRA_LABELS,
+                        type=str)
+    parser.add_argument('-j', '--jira-closed-status', nargs='*', help='Jira statuses that are considered to be closed.',
+                        dest='jira_closed',
+                        default=JIRA_CLOSED,
+                        type=str)
+    parser.add_argument('-t', '--jira-type', help='Jira issue type for new tasks.', dest='type', default=JIRA_TYPE,
+                        required=False)
+    parser.add_argument('-se', '--skip-existing', help='Do nothing if Jira already exists and open.',
+                        action='store_true',
+                        dest='skip_existing')
+    parser.add_argument('-q', '--quiet', help='Do not print the banner.', action='store_true', dest='quiet')
+    args = parser.parse_args()
+
+    main(args.identifier,
+         args.project,
+         args.summary,
+         desc=args.desc,
+         attach=args.attach,
+         labels=args.labels,
+         jira_closed=args.jira_closed,
+         skip_existing=args.skip_existing,
+         quiet=args.quiet
+         )
+
+
+if __name__ == "__main__":
+    interactive()

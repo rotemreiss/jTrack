@@ -22,20 +22,27 @@ jTrack uses a local Sqlite to track the issues that have already been created an
 ---
 
 ## Installation
-### Clone the repository
-- `git clone https://github.com/rotemreiss/jTrack.git`
+### Prerequisites
+- Export the Jira details
+  ```bash
+  export JIRA_URL="https://JIRAURL"
+  export JIRA_USER="JIRA_USER"
+  export JIRA_PASSWORD="JIRA_PASSWORD"
+  ```
 
-### Install dependencies
-- `pip install -r requirements.txt`
+### PIP (recommended)
+```bash
+pip install jtrack
+```
 
-### Setup
-- Copy `config.py.template` to `config.py`\
-  ```cp config.py.template config.py```
-- Fill the url, username and password
+### Manual
+```bash
+git clone https://github.com/rotemreiss/jTrack.git
+cd jTrack
+pip install .
+```
 
-#### Want to run jTrack from anywhere? NP!
-  - Edit `launcher.sh` and follow the instructions there
-  - Run `cp launcher.sh /usr/local/bin/jtrack`
+
 
 ---
 
