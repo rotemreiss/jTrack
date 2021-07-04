@@ -65,6 +65,7 @@ Short Form    | Long Form            | Description
 -j            | --jira-closed-status | Jira statuses that are considered to be closed, defaults to 'Closed' and 'Resolved', separated by commas. 
 -t            | --jira-type          | Jira issue type for new tasks, deafults to 'Task'.
 -se           | --skip-existing      | Do nothing if Jira already exists and open.
+-q           | --quiet      | Do not print the banner.
 
 ### Examples
 - List all options\
