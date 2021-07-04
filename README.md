@@ -69,13 +69,13 @@ Short Form    | Long Form            | Description
 
 ### Examples
 - List all options\
-  ```python jtrack.py --help```
+  ```jtrack --help```
 - Handle new "event" with the identifier (unique key) *domain.com*\
-  ```python jtrack.py -p MY_PROJECT -i domain.com -s "This is the subject"```
+  ```jtrack -p MY_PROJECT -i domain.com -s "This is the subject"```
 - With Labels\
-  ```python jtrack.py -p MY_PROJECT -i domain.com -l SCAN-LABEL, DAILY-SCAN -s "This is the subject"```
+  ```jtrack -p MY_PROJECT -i domain.com -l SCAN-LABEL, DAILY-SCAN -s "This is the subject"```
 - With attachment\
-  ```python jtrack.py -p MY_PROJECT -i domain.com -s "This is the subject" -a /tmp/scan-results.log```
+  ```jtrack -p MY_PROJECT -i domain.com -s "This is the subject" -a /tmp/scan-results.log```
 
 ### Real-life Examples
 #### WordPress Scanner
