@@ -198,13 +198,13 @@ def main(identifier, project, summary, **kwargs):
     cursor = db.cursor()
 
     # Initialize default values.
-    skip_existing=kwargs.get('skip_existing', True),
-    jira_closed=kwargs.get('jira_closed', JIRA_CLOSED),
-    attachment=kwargs.get('attach', None),
-    type=kwargs.get('type', JIRA_TYPE),
-    description=kwargs.get('desc', None),
-    labels=kwargs.get('labels', JIRA_LABELS),
-    upsert_jira(identifier, project, summary, skip_existing, jira_closed, attachment, type, description, labels)
+    skip_existing=kwargs.get('skip_existing', True)
+    jira_closed=kwargs.get('jira_closed', JIRA_CLOSED)
+    attachment=kwargs.get('attach', None)
+    itype=kwargs.get('type', JIRA_TYPE)
+    description=kwargs.get('desc', None)
+    labels=kwargs.get('labels', JIRA_LABELS)
+    upsert_jira(identifier, project, summary, skip_existing, jira_closed, attachment, itype, description, labels)
 
     db.close()
 
