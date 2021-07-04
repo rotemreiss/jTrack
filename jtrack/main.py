@@ -95,7 +95,6 @@ def has_existing_task(identifier, jira_closed):
         jira_key = get_jira_key_by_identifier(identifier)
         status = jira.get_issue_status(jira_key)
         # If task exists, but closed - return false.
-        print(status)
         if status in jira_closed:
             return False
         else:
@@ -178,7 +177,7 @@ def main(identifier, project, summary, **kwargs):
     global jira
 
     # Every tool needs a banner.
-    if kwargs.get('quiet', False) is True:
+    if kwargs.get('quiet', False) is False:
         banner()
 
     # Jira Connection Details
