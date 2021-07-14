@@ -22,20 +22,27 @@ jTrack uses a local Sqlite to track the issues that have already been created an
 ---
 
 ## Installation
-### Clone the repository
-- `git clone https://github.com/rotemreiss/jTrack.git`
+### Prerequisites
+- Export the Jira details
+  ```bash
+  export JIRA_URL="https://JIRAURL"
+  export JIRA_USER="JIRA_USER"
+  export JIRA_PASSWORD="JIRA_PASSWORD"
+  ```
 
-### Install dependencies
-- `pip install -r requirements.txt`
+### PIP (recommended)
+```bash
+pip install jtrack
+```
 
-### Setup
-- Copy `config.py.template` to `config.py`\
-  ```cp config.py.template config.py```
-- Fill the url, username and password
+### Manual
+```bash
+git clone https://github.com/rotemreiss/jTrack.git
+cd jTrack
+pip install .
+```
 
-#### Want to run jTrack from anywhere? NP!
-  - Edit `launcher.sh` and follow the instructions there
-  - Run `cp launcher.sh /usr/local/bin/jtrack`
+
 
 ---
 
@@ -58,16 +65,17 @@ Short Form    | Long Form            | Description
 -j            | --jira-closed-status | Jira statuses that are considered to be closed, defaults to 'Closed' and 'Resolved', separated by commas. 
 -t            | --jira-type          | Jira issue type for new tasks, deafults to 'Task'.
 -se           | --skip-existing      | Do nothing if Jira already exists and open.
+-q           | --quiet      | Do not print the banner.
 
 ### Examples
 - List all options\
-  ```python jtrack.py --help```
+  ```jtrack --help```
 - Handle new "event" with the identifier (unique key) *domain.com*\
-  ```python jtrack.py -p MY_PROJECT -i domain.com -s "This is the subject"```
+  ```jtrack -p MY_PROJECT -i domain.com -s "This is the subject"```
 - With Labels\
-  ```python jtrack.py -p MY_PROJECT -i domain.com -l SCAN-LABEL, DAILY-SCAN -s "This is the subject"```
+  ```jtrack -p MY_PROJECT -i domain.com -l SCAN-LABEL, DAILY-SCAN -s "This is the subject"```
 - With attachment\
-  ```python jtrack.py -p MY_PROJECT -i domain.com -s "This is the subject" -a /tmp/scan-results.log```
+  ```jtrack -p MY_PROJECT -i domain.com -s "This is the subject" -a /tmp/scan-results.log```
 
 ### Real-life Examples
 #### WordPress Scanner
