@@ -185,10 +185,22 @@ def main(identifier, project, summary, **kwargs):
     JIRA_USER = os.environ.get('JIRA_USER')
     JIRA_PASSWORD = os.environ.get('JIRA_PASSWORD')
 
-    jira = Jira(
-        url=JIRA_URL,
-        username=JIRA_USER,
-        password=JIRA_PASSWORD)
+    # Initialize proxy variable
+    proxy = kwargs.get('proxy', None)
+
+    if proxy:
+        jira = Jira(
+            url=JIRA_URL,
+            username=JIRA_USER,
+            password=JIRA_PASSWORD,
+            proxies={"http": "http://" + proxy, "https": "https://" + proxy},
+            verify_ssl=False)
+    else:
+        jira = Jira(
+            url=JIRA_URL,
+            username=JIRA_USER,
+            password=JIRA_PASSWORD,
+            )
 
     # Init DB.
     sqli_db = "jtrack.db"
@@ -229,6 +241,7 @@ def interactive():
                         type=str)
     parser.add_argument('-t', '--jira-type', help='Jira issue type for new tasks.', dest='type', default=JIRA_TYPE,
                         required=False)
+    parser.add_argument('-pr', '--proxy', help='ip of domain of proxy to use', dest='proxy',required=False)
     parser.add_argument('-se', '--skip-existing', help='Do nothing if Jira already exists and open.',
                         action='store_true',
                         dest='skip_existing')
