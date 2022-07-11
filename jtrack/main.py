@@ -222,7 +222,7 @@ def interactive():
                         required=True)
     parser.add_argument('-s', '--summary', help='Value for the summary field.', dest='summary', required=True)
     parser.add_argument('-d', '--description', help='Value for the description field.', dest='desc')
-    parser.add_argument('-a', '--attachments', help='Paths of files to add as attachment seperated by comma', type=attachment_arg,
+    parser.add_argument('-a', '--attachments', help='One or more file paths seperated by comma to be attached', type=attachment_arg,
                         dest='attach')
     parser.add_argument('-l', '--labels', nargs='*', help='Jira labels to add to new issues.', dest='labels',
                         default=JIRA_LABELS,
