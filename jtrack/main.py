@@ -103,22 +103,22 @@ def has_existing_task(identifier, jira_closed):
 
 
 # Upsert a jira issue (wrapper for insert or update actions).
-def upsert_jira(identifier, project, summary, skip_existing, jira_closed, attachment, type, description, labels):
+def upsert_jira(identifier, project, summary, skip_existing, jira_closed, attachments, type, description, labels):
     if has_existing_task(identifier, jira_closed):
         if skip_existing:
             print('Issue already exists and open. Skipping.')
             return False
         jira_key = get_jira_key_by_identifier(identifier)
-        update_jira(jira_key, attachment)
+        update_jira(jira_key, attachments)
     else:
-        new_jira = create_new_jira(project, type, summary, description, labels, attachment)
+        new_jira = create_new_jira(project, type, summary, description, labels, attachments)
         jira_key = new_jira['key']
         upsert_new_identifier(identifier, jira_key)
         print(f'Created new Jira ticket: {jira_key}. jTrack id: {identifier}')
 
 
 # Create a new Jira issue.
-def create_new_jira(project, type, summary, description, labels, attachment):
+def create_new_jira(project, type, summary, description, labels, attachments):
     new_task = jira.issue_create(fields={
         'project': {'key': project},
         'issuetype': {
@@ -131,8 +131,9 @@ def create_new_jira(project, type, summary, description, labels, attachment):
     jira_key = new_task['id']
 
     # Add the report as an attachment
-    if attachment is not None:
-        jira.add_attachment(jira_key, attachment)
+    if attachments is not None:
+        for attachment in attachments:
+            jira.add_attachment(jira_key, attachment)
 
     # Add description.
     if description is not None:
@@ -145,17 +146,20 @@ def create_new_jira(project, type, summary, description, labels, attachment):
 # Currently onlyl support attachment addition.
 # @todo Extend to support description.
 def update_jira(jira_key, attachment):
-    if attachment is not None:
-        jira.add_attachment(jira_key, attachment)
+    if attachments is not None:
+        for attachment in attachments:
+            jira.add_attachment(jira_key, attachment)
     else:
         print('No attachment provided. Nothing to updated.')
 
 
-def attachment_arg(path):
+def attachment_arg(paths):
     # from os.path import exists
-    if not os.path.isfile(path):
-        raise ValueError  # or TypeError, or `argparse.ArgumentTypeError
-    return path
+    paths = str(paths).split(',')
+    for path in paths:
+        if not os.path.isfile(path):
+            raise ValueError  # or TypeError, or `argparse.ArgumentTypeError
+    return paths
 
 
 def banner():
@@ -199,11 +203,11 @@ def main(identifier, project, summary, **kwargs):
     # Initialize default values.
     skip_existing = kwargs.get('skip_existing', True)
     jira_closed = kwargs.get('jira_closed', JIRA_CLOSED)
-    attachment = kwargs.get('attach', None)
+    attachments = kwargs.get('attach', None)
     itype = kwargs.get('type', JIRA_TYPE)
     description = kwargs.get('desc', None)
     labels = kwargs.get('labels', JIRA_LABELS)
-    upsert_jira(identifier, project, summary, skip_existing, jira_closed, attachment, itype, description, labels)
+    upsert_jira(identifier, project, summary, skip_existing, jira_closed, attachments, itype, description, labels)
 
     db.close()
 
@@ -218,7 +222,7 @@ def interactive():
                         required=True)
     parser.add_argument('-s', '--summary', help='Value for the summary field.', dest='summary', required=True)
     parser.add_argument('-d', '--description', help='Value for the description field.', dest='desc')
-    parser.add_argument('-a', '--attachment', help='Path of file to add as attachment.', type=attachment_arg,
+    parser.add_argument('-a', '--attachment', help='One or more file paths seperated by comma to be attached', type=attachment_arg,
                         dest='attach')
     parser.add_argument('-l', '--labels', nargs='*', help='Jira labels to add to new issues.', dest='labels',
                         default=JIRA_LABELS,
