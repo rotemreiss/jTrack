@@ -145,7 +145,7 @@ def create_new_jira(project, type, summary, description, labels, attachments):
 
 # Currently onlyl support attachment addition.
 # @todo Extend to support description.
-def update_jira(jira_key, attachment):
+def update_jira(jira_key, attachments):
     if attachments is not None:
         for attachment in attachments:
             jira.add_attachment(jira_key, attachment)
