@@ -60,7 +60,7 @@ Short Form    | Long Form            | Description
 -i            | --identifier         | A system identifier for the issue (unique key).
 -s            | --summary            | Value for the summary field.
 -d            | --description        | Value for the description field.
--a            | --attachment         | Path of file to add as attachment.
+-a            | --attachment         | One or more file paths seperated by comma to be attached
 -l            | --labels             | Jira labels to add to new issues, separated by commas.
 -j            | --jira-closed-status | Jira statuses that are considered to be closed, defaults to 'Closed' and 'Resolved', separated by commas. 
 -t            | --jira-type          | Jira issue type for new tasks, deafults to 'Task'.
