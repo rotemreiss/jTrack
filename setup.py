@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setup(
     name="jtrack",
-    version="1.0.1",
+    version="1.1",
     author="Rotem Reiss",
     author_email="reiss.r@gmail.com",
     description="Fast and effective integration to Jira.",
