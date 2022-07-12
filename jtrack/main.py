@@ -119,15 +119,24 @@ def upsert_jira(identifier, project, summary, skip_existing, jira_closed, attach
 
 # Create a new Jira issue.
 def create_new_jira(project, type, summary, description, labels, attachments, priority):
-    new_task = jira.issue_create(fields={
+    fields = {
         'project': {'key': project},
         'issuetype': {
             "name": type
         },
         'summary': summary,
-        'labels': labels,
-        'priority': {'name': priority}
-    })
+        'labels': labels
+    }
+
+    # Add priority
+    if priority is not None:
+        fields['priority'] = {'name': priority}
+
+    # Add description.
+    if description is not None:
+        fields['description'] = description
+
+    new_task = jira.issue_create(fields=fields)
 
     jira_key = new_task['id']
 
@@ -135,11 +144,6 @@ def create_new_jira(project, type, summary, description, labels, attachments, pr
     if attachments is not None:
         for attachment in attachments:
             jira.add_attachment(jira_key, attachment)
-
-    # Add description.
-    if description is not None:
-        desc_field = {'description': description}
-        jira.update_issue_field(jira_key, desc_field)
 
     return new_task
 
