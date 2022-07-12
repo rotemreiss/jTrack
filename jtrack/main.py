@@ -103,7 +103,7 @@ def has_existing_task(identifier, jira_closed):
 
 
 # Upsert a jira issue (wrapper for insert or update actions).
-def upsert_jira(identifier, project, summary, skip_existing, jira_closed, attachments, type, description, labels):
+def upsert_jira(identifier, project, summary, skip_existing, jira_closed, attachments, type, description, labels, priority):
     if has_existing_task(identifier, jira_closed):
         if skip_existing:
             print('Issue already exists and open. Skipping.')
@@ -111,21 +111,22 @@ def upsert_jira(identifier, project, summary, skip_existing, jira_closed, attach
         jira_key = get_jira_key_by_identifier(identifier)
         update_jira(jira_key, attachments)
     else:
-        new_jira = create_new_jira(project, type, summary, description, labels, attachments)
+        new_jira = create_new_jira(project, type, summary, description, labels, attachments, priority)
         jira_key = new_jira['key']
         upsert_new_identifier(identifier, jira_key)
         print(f'Created new Jira ticket: {jira_key}. jTrack id: {identifier}')
 
 
 # Create a new Jira issue.
-def create_new_jira(project, type, summary, description, labels, attachments):
+def create_new_jira(project, type, summary, description, labels, attachments, priority):
     new_task = jira.issue_create(fields={
         'project': {'key': project},
         'issuetype': {
             "name": type
         },
         'summary': summary,
-        'labels': labels
+        'labels': labels,
+        'priority': {'name': priority}
     })
 
     jira_key = new_task['id']
@@ -207,7 +208,8 @@ def main(identifier, project, summary, **kwargs):
     itype = kwargs.get('type', JIRA_TYPE)
     description = kwargs.get('desc', None)
     labels = kwargs.get('labels', JIRA_LABELS)
-    upsert_jira(identifier, project, summary, skip_existing, jira_closed, attachments, itype, description, labels)
+    priority = kwargs.get('priority', None)
+    upsert_jira(identifier, project, summary, skip_existing, jira_closed, attachments, itype, description, labels, priority)
 
     db.close()
 
@@ -222,6 +224,7 @@ def interactive():
                         required=True)
     parser.add_argument('-s', '--summary', help='Value for the summary field.', dest='summary', required=True)
     parser.add_argument('-d', '--description', help='Value for the description field.', dest='desc')
+    parser.add_argument('-pr', '--priority', help='Value for the priority field.', dest='priority')
     parser.add_argument('-a', '--attachment', help='One or more file paths seperated by comma to be attached', type=attachment_arg,
                         dest='attach')
     parser.add_argument('-l', '--labels', nargs='*', help='Jira labels to add to new issues.', dest='labels',
@@ -243,6 +246,7 @@ def interactive():
          args.project,
          args.summary,
          desc=args.desc,
+         priority=args.priority,
          attach=args.attach,
          labels=args.labels,
          jira_closed=args.jira_closed,
