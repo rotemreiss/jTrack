@@ -60,12 +60,13 @@ Short Form    | Long Form            | Description
 -i            | --identifier         | A system identifier for the issue (unique key).
 -s            | --summary            | Value for the summary field.
 -d            | --description        | Value for the description field.
+-pr           | --priority           | Value for the priority field.
 -a            | --attachment         | One or more file paths seperated by comma to be attached
 -l            | --labels             | Jira labels to add to new issues, separated by commas.
 -j            | --jira-closed-status | Jira statuses that are considered to be closed, defaults to 'Closed' and 'Resolved', separated by commas. 
 -t            | --jira-type          | Jira issue type for new tasks, deafults to 'Task'.
 -se           | --skip-existing      | Do nothing if Jira already exists and open.
--q           | --quiet      | Do not print the banner.
+-q            | --quiet      | Do not print the banner.
 
 ### Examples
 - List all options\
