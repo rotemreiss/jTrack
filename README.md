@@ -63,7 +63,7 @@ Short Form    | Long Form            | Description
 -pr           | --priority           | Value for the priority field.
 -a            | --attachment         | One or more file paths seperated by comma to be attached
 -l            | --labels             | Jira labels to add to new issues, separated by space.
--j            | --jira-closed-status | Jira statuses that are considered to be closed, defaults to 'Closed' and 'Resolved', separated by commas. 
+-j            | --jira-closed-status | Jira statuses that are considered to be closed, defaults to 'Closed' and 'Resolved', separated by spaces. 
 -t            | --jira-type          | Jira issue type for new tasks, deafults to 'Task'.
 -se           | --skip-existing      | Do nothing if Jira already exists and open.
 -q            | --quiet      | Do not print the banner.
@@ -77,6 +77,8 @@ Short Form    | Long Form            | Description
   ```jtrack -p MY_PROJECT -i domain.com -l SCAN-LABEL, DAILY-SCAN -s "This is the subject"```
 - With attachment\
   ```jtrack -p MY_PROJECT -i domain.com -s "This is the subject" -a /tmp/scan-results.log```
+- Support additional closed types\
+  ```jtrack -p MY_PROJECT -i domain.com -s "This is the subject" -j Closed Resolved Done```
 
 ### Real-life Examples
 #### WordPress Scanner
