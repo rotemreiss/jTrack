@@ -17,7 +17,16 @@ jTrack uses a local Sqlite to track the issues that have already been created an
 ---
 
 ## The logic in a nutshell
-![](images/logic.png)
+```mermaid
+flowchart
+    A{Issue exists in local DB?}
+    A -->|No| B(Create a new Jira ticket)
+    A -->|Yes| C{Is Jira ticket open?}
+    C -->|No| B
+    C -->|Yes| D{Is --skip-existing argument provided?}
+    D -->|Yes| E[Do Nothing]
+    D -->|No| F[Update the ticket]
+```
 
 ---
 
