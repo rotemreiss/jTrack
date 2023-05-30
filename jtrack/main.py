@@ -254,6 +254,7 @@ def interactive():
          attach=args.attach,
          labels=args.labels,
          jira_closed=args.jira_closed,
+         itype=args.itype,
          skip_existing=args.skip_existing,
          quiet=args.quiet
          )
