@@ -103,7 +103,7 @@ def has_existing_task(identifier, jira_closed):
 
 
 # Upsert a jira issue (wrapper for insert or update actions).
-def upsert_jira(identifier, project, summary, skip_existing, jira_closed, attachments, type, description, labels, priority):
+def upsert_jira(identifier, project, summary, skip_existing, jira_closed, attachments, itype, description, labels, priority):
     if has_existing_task(identifier, jira_closed):
         if skip_existing:
             print('Issue already exists and open. Skipping.')
@@ -111,18 +111,18 @@ def upsert_jira(identifier, project, summary, skip_existing, jira_closed, attach
         jira_key = get_jira_key_by_identifier(identifier)
         update_jira(jira_key, attachments)
     else:
-        new_jira = create_new_jira(project, type, summary, description, labels, attachments, priority)
+        new_jira = create_new_jira(project, itype, summary, description, labels, attachments, priority)
         jira_key = new_jira['key']
         upsert_new_identifier(identifier, jira_key)
         print(f'Created new Jira ticket: {jira_key}. jTrack id: {identifier}')
 
 
 # Create a new Jira issue.
-def create_new_jira(project, type, summary, description, labels, attachments, priority):
+def create_new_jira(project, itype, summary, description, labels, attachments, priority):
     fields = {
         'project': {'key': project},
         'issuetype': {
-            "name": type
+            "name": itype
         },
         'summary': summary,
         'labels': labels
@@ -209,7 +209,7 @@ def main(identifier, project, summary, **kwargs):
     skip_existing = kwargs.get('skip_existing', True)
     jira_closed = kwargs.get('jira_closed', JIRA_CLOSED)
     attachments = kwargs.get('attach', None)
-    itype = kwargs.get('type', JIRA_TYPE)
+    itype = kwargs.get('itype', JIRA_TYPE)
     description = kwargs.get('desc', None)
     labels = kwargs.get('labels', JIRA_LABELS)
     priority = kwargs.get('priority', None)
@@ -238,7 +238,7 @@ def interactive():
                         dest='jira_closed',
                         default=JIRA_CLOSED,
                         type=str)
-    parser.add_argument('-t', '--jira-type', help='Jira issue type for new tasks.', dest='type', default=JIRA_TYPE,
+    parser.add_argument('-t', '--jira-type', help='Jira issue type for new tasks.', dest='itype', default=JIRA_TYPE,
                         required=False)
     parser.add_argument('-se', '--skip-existing', help='Do nothing if Jira already exists and open.',
                         action='store_true',
