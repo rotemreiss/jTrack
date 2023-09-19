@@ -12,7 +12,12 @@ You are using an automated scanner or QA tool and want it to automatically creat
 But.. How can my scanner know if the Jira has been already created on a previous scan?
 This is where jTrack comes in.
 
-jTrack uses a local Sqlite to track the issues that have already been created and then updates the issues OR creates new one if the previous has already been resolved.
+jTrack also takes on the responsibility of managing issue states. It ensures that existing issues are updated (or skipped, based on user preferences) and new issues are created if previous ones have already been resolved.
+
+jTrack offers two methods for state management:
+
+1. Utilizing a local Sqlite database.
+2. Leveraging a custom Jira field.
 
 ---
 
@@ -62,20 +67,21 @@ jTrack was developed and tested only with __Python3__.
 
 ## Usage
 
-Short Form    | Long Form            | Description
-------------- | -------------------- |-------------
--h            | --help               | Show this help message and exit
--p            | --project            | The project's name on Jira (e.g. EXAMPLE).
--i            | --identifier         | A system identifier for the issue (unique key).
--s            | --summary            | Value for the summary field.
--d            | --description        | Value for the description field.
--pr           | --priority           | Value for the priority field.
--a            | --attachment         | One or more file paths seperated by comma to be attached
--l            | --labels             | Jira labels to add to new issues, separated by space.
--j            | --jira-closed-status | Jira statuses that are considered to be closed, defaults to 'Closed' and 'Resolved', separated by spaces. 
--t            | --jira-type          | Jira issue type for new tasks, deafults to 'Task'.
--se           | --skip-existing      | Do nothing if Jira already exists and open.
--q            | --quiet      | Do not print the banner.
+Short Form    | Long Form              | Description
+------------- | ---------------------- |-------------
+-h            | --help                 | Show this help message and exit
+-p            | --project              | The project's name on Jira (e.g. EXAMPLE).
+-i            | --identifier           | A system identifier for the issue (unique key).
+-s            | --summary              | Value for the summary field.
+-d            | --description          | Value for the description field.
+-pr           | --priority             | Value for the priority field.
+-a            | --attachment           | One or more file paths seperated by comma to be attached
+-l            | --labels               | Jira labels to add to new issues, separated by space.
+-j            | --jira-closed-status   | Jira statuses that are considered to be closed, defaults to 'Closed' and 'Resolved', separated by spaces. 
+-t            | --jira-type            | Jira issue type for new tasks, deafults to 'Task'.
+-se           | --skip-existing        | Do nothing if Jira already exists and open.
+-sfn          | --stateless-field-name | The name of the custom field for stateless tracking (optional).
+-q            | --quiet                | Do not print the banner.
 
 ### Examples
 - List all options\
@@ -88,6 +94,8 @@ Short Form    | Long Form            | Description
   ```jtrack -p MY_PROJECT -i domain.com -s "This is the subject" -a /tmp/scan-results.log```
 - Support additional closed types\
   ```jtrack -p MY_PROJECT -i domain.com -s "This is the subject" -j Closed Resolved Done```
+- With Jira state management instead of a local DB\
+  ```jtrack -p MY_PROJECT -i domain.com -s "This is the subject" -sfn CustomFieldName```
 
 ### Real-life Examples
 #### WordPress Scanner

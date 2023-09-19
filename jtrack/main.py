@@ -88,18 +88,42 @@ def update_jira_db(id, jira_key):
     except Exception as e:
         print("We could not connect to {} due to following error: {}".format(jira_key, e))
 
+def has_existing_task_stateless(identifier, jira_closed, stateless_field_name):
+    if stateless_field_name:
+        # If stateless_field_name is provided, use it to check for existing tasks in Jira.
+        # Use JQL to search for issues with the custom field matching the local identifier and open status.
+        jql = f'"{stateless_field_name}" = "{identifier}" AND status not in ({",".join([f"\"{status}\"" for status in jira_closed])})'
 
-# Checks if we already have an existing Jira task so we'll know if we want to update or create a new one.
-def has_existing_task(identifier, jira_closed):
+        issues = jira.search_issues(jql)
+
+        if issues:
+            # Issue with the same local identifier exists and not closed.
+            return True
+
+    return False
+
+
+def has_existing_task_local_db(identifier, jira_closed):
+    # Check the local database
     if is_identifier_in_db(identifier):
         jira_key = get_jira_key_by_identifier(identifier)
         status = jira.get_issue_status(jira_key)
-        # If task exists, but closed - return false.
+        # If task exists but is closed, return False.
         if status in jira_closed:
             return False
         else:
             return True
+
     return False
+
+
+# Checks if we already have an existing Jira task so we'll know if we want to update or create a new one.
+def has_existing_task(identifier, jira_closed, stateless_field_name):
+    # Check if stateless_field_name is provided.
+    if stateless_field_name:
+        return has_existing_task_stateless(identifier, jira_closed, stateless_field_name)
+    else:
+        return has_existing_task_local_db(identifier, jira_closed)
 
 
 # Upsert a jira issue (wrapper for insert or update actions).
@@ -118,7 +142,7 @@ def upsert_jira(identifier, project, summary, skip_existing, jira_closed, attach
 
 
 # Create a new Jira issue.
-def create_new_jira(project, itype, summary, description, labels, attachments, priority):
+def create_new_jira(project, itype, summary, description, labels, attachments, priority, local_identifier, stateless_field_name):
     fields = {
         'project': {'key': project},
         'issuetype': {
@@ -127,6 +151,10 @@ def create_new_jira(project, itype, summary, description, labels, attachments, p
         'summary': summary,
         'labels': labels
     }
+
+    # Add custom field for local identifier
+    if stateless_field_name and local_identifier:
+        fields[stateless_field_name] = local_identifier
 
     # Add priority
     if priority is not None:
@@ -199,11 +227,14 @@ def main(identifier, project, summary, **kwargs):
         username=JIRA_USER,
         password=JIRA_PASSWORD)
 
-    # Init DB.
-    sqli_db = "jtrack.db"
-    db_install(sqli_db)
-    db = sqlite3.connect(sqli_db)
-    cursor = db.cursor()
+    stateless_field_name = kwargs.get('stateless_field_name')
+
+    if not stateless_field_name:
+        # Init DB.
+        sqli_db = "jtrack.db"
+        db_install(sqli_db)
+        db = sqlite3.connect(sqli_db)
+        cursor = db.cursor()
 
     # Initialize default values.
     skip_existing = kwargs.get('skip_existing', True)
@@ -213,9 +244,23 @@ def main(identifier, project, summary, **kwargs):
     description = kwargs.get('desc', None)
     labels = kwargs.get('labels', JIRA_LABELS)
     priority = kwargs.get('priority', None)
-    upsert_jira(identifier, project, summary, skip_existing, jira_closed, attachments, itype, description, labels, priority)
+    stateless_field_name = kwargs.get('stateless_field_name')
+    upsert_jira(
+        identifier,
+        project,
+        summary,
+        skip_existing,
+        jira_closed,
+        attachments,
+        itype,
+        description,
+        labels,
+        priority,
+        stateless_field_name
+    )
 
-    db.close()
+    if not stateless_field_name:
+        db.close()
 
 
 def interactive():
@@ -243,6 +288,7 @@ def interactive():
     parser.add_argument('-se', '--skip-existing', help='Do nothing if Jira already exists and open.',
                         action='store_true',
                         dest='skip_existing')
+    parser.add_argument('sfn', '--stateless-field-name', help='Name of the Jira custom field for holding the local identifier.', dest='stateless_field_name')
     parser.add_argument('-q', '--quiet', help='Do not print the banner.', action='store_true', dest='quiet')
     args = parser.parse_args()
 
@@ -256,7 +302,8 @@ def interactive():
          jira_closed=args.jira_closed,
          itype=args.itype,
          skip_existing=args.skip_existing,
-         quiet=args.quiet
+         quiet=args.quiet,
+         stateless_field_name=args.stateless_field_name
          )
 
 
