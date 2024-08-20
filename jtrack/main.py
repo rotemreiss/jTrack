@@ -128,15 +128,15 @@ def has_existing_task(identifier, jira_closed, stateless_field_name):
 
 
 # Upsert a jira issue (wrapper for insert or update actions).
-def upsert_jira(identifier, project, summary, skip_existing, jira_closed, attachments, itype, description, labels, priority):
-    if has_existing_task(identifier, jira_closed):
+def upsert_jira(identifier, project, summary, skip_existing, jira_closed, attachments, itype, description, labels, priority, stateless_field_name):
+    if has_existing_task(identifier, jira_closed, stateless_field_name):
         if skip_existing:
             print('Issue already exists and open. Skipping.')
             return False
         jira_key = get_jira_key_by_identifier(identifier)
         update_jira(jira_key, attachments)
     else:
-        new_jira = create_new_jira(project, itype, summary, description, labels, attachments, priority)
+        new_jira = create_new_jira(project, itype, summary, description, labels, attachments, priority, identifier, stateless_field_name)
         jira_key = new_jira['key']
         upsert_new_identifier(identifier, jira_key)
         print(f'Created new Jira ticket: {jira_key}. jTrack id: {identifier}')
