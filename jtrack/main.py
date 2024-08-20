@@ -92,7 +92,8 @@ def has_existing_task_stateless(identifier, jira_closed, stateless_field_name):
     if stateless_field_name:
         # If stateless_field_name is provided, use it to check for existing tasks in Jira.
         # Use JQL to search for issues with the custom field matching the local identifier and open status.
-        jql = f'"{stateless_field_name}" = "{identifier}" AND status not in ({",".join([f"\"{status}\"" for status in jira_closed])})'
+        statuses = ",".join(['"' + status + '"' for status in jira_closed])
+        jql = f'"{stateless_field_name}" = "{identifier}" AND status not in ({statuses})'
 
         issues = jira.search_issues(jql)
 
