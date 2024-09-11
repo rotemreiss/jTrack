@@ -289,7 +289,7 @@ def interactive():
     parser.add_argument('-se', '--skip-existing', help='Do nothing if Jira already exists and open.',
                         action='store_true',
                         dest='skip_existing')
-    parser.add_argument('sfn', '--stateless-field-name', help='Name of the Jira custom field for holding the local identifier.', dest='stateless_field_name')
+    parser.add_argument('-sfn', '--stateless-field-name', help='Name of the Jira custom field for holding the local identifier.', dest='stateless_field_name')
     parser.add_argument('-q', '--quiet', help='Do not print the banner.', action='store_true', dest='quiet')
     args = parser.parse_args()
 
